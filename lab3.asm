@@ -4,7 +4,7 @@
     ; r1    Temporary values
 
 LoopStart                   ; while (true) {
-    in                      ;     r0 = getc()
+    in                      ;     r0 = getchar()
 
     ld r1, NegAsciiZero
     add r0, r0, r1          ;     if (r0 < '0')
