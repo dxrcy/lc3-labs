@@ -2,16 +2,16 @@
 
     ; r0    X
     ; r1    Y
-    ; r2    Address of result values (without offset) (after subroutine)
+    ; r6    Address of result values (without offset) (after subroutine)
 
     ; Multiply:
     ; r0    Shifts left
     ; r1    (Does not modify)
-    ; r2    Discarded calculation value
+    ; r6    Loop counter [14->0]
     ; r3    Product value
     ; r4    sign(X)
-    ; r5    Loop counter [14->0]
-    ; r6    Bitmask, shifts left
+    ; r2    Bitmask, shifts left
+    ; r5    Discarded calculation value
 
     ; Load the input values
     ldi r0, AddrX       ; Load into r0 the value at x3100
@@ -20,20 +20,19 @@
     ; Calculate product
     JSR Multiply1       ; Modifies r0 and r1
 
-    ld r2, AddrResults  ; Set r2 to the address of the results (x3102)
-    str r3, r2, #0      ; Store the product at (x3102 + 0)
+    ld r6, AddrResults  ; Set r6 to the address of the results (x3102)
+    str r3, r6, #0      ; Store the product at (x3102 + 0)
 
-    DEBUG
     HALT
 
 ; ---------------------------------------------------------
 Multiply1                   ; Multiply1() {
     and r3, r3, #0          ;     r3 = 0
     and r4, r4, #0          ;     r4 = false
-    and r5, r5, #0          ;     r5 = 14
-    add r5, r5, #14         ;
-    and r6, r6, #0          ;     r6 = 1
-    add r6, r6, #1          ;
+    and r2, r2, #0          ;     r2 = 14
+    add r2, r2, #14         ;
+    and r5, r5, #0          ;     r5 = 1
+    add r5, r5, #1          ;
                             ;
     add r0, r0, #0          ;     if (r0 < 0) {
     BRzp MultiplyAfterPositive
@@ -49,17 +48,17 @@ MultiplyAfterPositive       ;     }
     not r4, r4              ;         r4 = !r4
                             ;     }
 MultiplyStart               ;     loop {
-    add r1, r1, #0          ;         if (r5 < 0)
+    add r1, r1, #0          ;         if (r2 < 0)
     BRnz MultiplyEnd        ;             break
                             ;
-    and r2, r0, r6          ;         if (r0 & r6) {
+    and r6, r0, r5          ;         if (r0 & r5) {
     BRz MultiplyIfEnd       ;
     add r3, r3, r1          ;             r3 += r1
 MultiplyIfEnd               ;         }
                             ;
     add r1, r1, r1          ;         r1 <<= 1
-    add r6, r6, r6          ;         r6 <<= 1
-    add r5, r5, #-1         ;         --r5
+    add r5, r5, r5          ;         r5 <<= 1
+    add r2, r2, #-1         ;         --r2
     BR MultiplyStart        ;     }
 MultiplyEnd                 ;
                             ;
