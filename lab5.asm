@@ -9,7 +9,7 @@
     ; r1    (Does not modify)
     ; r2    (Does not modify)
     ; r3    Product value
-    ; r4    abs(X)
+    ; r4    sign(X)
 
     ; Divide:
     ; r0    Modulus value
