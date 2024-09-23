@@ -13,7 +13,7 @@
 
     ; Divide:
     ; r0    Modulus value
-    ; r1    (Does not modify)
+    ; r1    abs(Y)
     ; r2    (Does not modify)
     ; r3    Quotient value
     ; r4    -Y
@@ -29,9 +29,8 @@
     JSR Multiply        ; Modifies r0 and r1
     str r3, r2, #0      ; Store the product at (x3102 + 0)
 
-    ; Load the input values again
+    ; Load input value again, because it was modified
     ldi r0, AddrX
-    ldi r1, AddrY
 
     ; Calculate quotient and modulus (remainder)
     JSR Divide          ; Modifies r0
